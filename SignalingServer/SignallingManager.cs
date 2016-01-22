@@ -126,7 +126,7 @@ namespace SignalingServer
 			string message = await mConnections[mConnectionId].ReadStringAsync(cancellation).ConfigureAwait(false);
 			if(mReceivedFeedback != null)
 				new Task(() => { mReceivedFeedback.Invoke (message, this); }).Start();
-			
+
 			Dictionary<string, JToken> param;
 			Command command = ParseJsonRequest (message, out param);
 			if (command != Command.NO_COMMAND && (!param.ContainsKey ("Id") || param ["Id"].Type != JTokenType.String)) {
@@ -139,7 +139,7 @@ namespace SignalingServer
 
 
 			string id = (command != Command.NO_COMMAND) ? (string)param ["Id"] : "";
-				
+
 			switch(command) {
 			case Command.SEND:
 				SendCommand(id, param);
@@ -157,9 +157,9 @@ namespace SignalingServer
 			case Command.NO_COMMAND:
 				mConnections [mConnectionId].WriteString (GenerateJsonResponse (Status.NOT_RECOGNIZED, "", 
 					(param.ContainsKey("Error")) ? new Dictionary<string, JToken> () { {
-						"Error",
-						JToken.FromObject (param["Error"])
-					} } : null));
+							"Error",
+							JToken.FromObject (param["Error"])
+						} } : null));
 				break;
 			}
 		}
@@ -173,9 +173,9 @@ namespace SignalingServer
 					mQueue.TryDequeue (out q);
 			}
 		}
-	
+
 		protected string GenerateJsonResponse(Enum status, string id, Dictionary<string, JToken> param) {
-			
+
 			string result = null;
 			JObject json = new JObject ();
 			json.Add ("Id", JToken.FromObject(id));
@@ -270,7 +270,7 @@ namespace SignalingServer
 					{"Error", JToken.FromObject(e.Message)} 
 				} ));
 			}
-				
+
 		}
 
 		protected void OnlineCommand(string id, Dictionary<string, JToken> param) {
@@ -283,7 +283,7 @@ namespace SignalingServer
 			JArray online_connections = new JArray();
 			foreach(Guid connection in mConnections.Keys)
 				online_connections.Add(JToken.FromObject(connection.ToString("B")));
-			
+
 			mConnections[mConnectionId].WriteString(GenerateJsonResponse(Command.ONLINE, id, new Dictionary<string, JToken>() { 
 				{"OnlineConnections", online_connections} 
 			} ));
